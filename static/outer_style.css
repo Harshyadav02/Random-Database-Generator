@@ -1,0 +1,47 @@
+        
+/* Style for the success message */
+.success {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Style for the error message */
+.error {
+    background-color: #f44336;
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Style for the back link */
+a {
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Apply some margin and center the whole page content */
+body {
+    margin: 0 auto;
+    max-width: 600px;
+    padding: 20px;
+}
+
+/* Style the page title at center*/
+h1 {
+    text-align: center;
+}
+
+/* Add some spacing for the horizontal line */
+hr {
+    margin: 20px 0;
+}
+

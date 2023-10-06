@@ -77,7 +77,7 @@ def table_details(db_name, num_tables):
 
             if existing_table:
                 existing_table = existing_table[0]
-                messages.append( (f'Table {num}', table_name, 'Table alrady exists.') )
+                messages.append( (f'Table {num}', table_name, 'Table already exists.') )
                 num += 1
                 # print(existing_table)
                 # print(messages)
@@ -110,7 +110,7 @@ def table_details(db_name, num_tables):
 
     total = 0
     for i in messages:
-        if i[2]=='Table created successfully' or i[2]=='Table alrady exists.':
+        if i[2]=='Table created successfully' or i[2]=='Table already exists.':
             total += 1
 
     return render_template('output.html', messages=messages, total= total, num_tables=num_tables, db_name=db_name )

@@ -94,7 +94,7 @@ This will start the Flask development server, and you can access the Random Data
 
 Here's an overview of the project's directory structure:
 
-- app.py: The main Flask application.
-- templates/: HTML templates for the web interface.
-- static/: Static assets (CSS, JavaScript, images).
-- README.md: You are here!
+- `app.py` : The main Flask application.
+- `templates/ `: HTML templates for the web interface.
+- `static/` : Static assets (CSS, JavaScript, images).
+- `README.md` : You are here!

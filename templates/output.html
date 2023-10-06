@@ -30,7 +30,7 @@
 
     {% for i in messages %}
 
-        {% if i[2]=='Table created successfully' or i[2]=='Table alrady exists.' %}
+        {% if i[2]=='Table created successfully' or i[2]=='Table already exists.' %}
         <div class="success">
             <h3>{{ i[0] }} : {{ i[1] }}</h3>
             <p>{{ i[2] }}</p>

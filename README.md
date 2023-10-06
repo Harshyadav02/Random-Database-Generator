@@ -1,12 +1,11 @@
-# Random-Database-Generator
-Random Database Generator : Easily create custom databases and tables. Populate them with dummy data in seconds.
+# Random Database Generator README
 
 ## Table of Contents
-1. Introduction
-2. Prerequisites
-3. Installation
-4. Usage
-5. Project Structure
+1. [Introduction](#Introduction)
+2. [Prerequisites](#Prerequisites)
+3. [Installation](#Installation)
+4. [Usage](#Usage)
+5. [Project Structure](#Project-Structure)
 
 ## 1. Introduction
 
@@ -99,4 +98,3 @@ Here's an overview of the project's directory structure:
 - templates/: HTML templates for the web interface.
 - static/: Static assets (CSS, JavaScript, images).
 - README.md: You are here!
-

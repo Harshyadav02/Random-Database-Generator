@@ -115,36 +115,6 @@ def generate_fake_data(column_name, data_type):
     if 'bool' in data_type or 'boolean' in data_type:
         return fake.random_number(2)
     
-    #-------------------------------------------------------
-    #  generating fake data for decimal data Type.
-    if 'decimal' in data_type or 'dec' in data_type:
-        print(data_type)
-
-        if 'decimal' in data_type:
-            numbers = [int(num) for num in data_type.replace("decimal(", "").replace(")", "").split(",")]
-            # print(numbers)
-
-        elif 'dec' in data_type:
-            numbers = [int(num) for num in data_type.replace("dec(", "").replace(")", "").split(",")]
-            # print(numbers)
-
-
-        total_digit = numbers[0]
-        digits_after_decimal = numbers[1]
-
-        # Generate a random decimal value
-        decimal_value = fake.pydecimal(left_digits=total_digit-digits_after_decimal, right_digits=digits_after_decimal, positive=True)
-
-        # print(decimal_value)
-        return decimal_value
-    #-------------------------------------------------------------
-
-
-
-
-
-
-
 
     if 'bigint' in data_type and ('phone_number' in column_name or 'contact' in column_name or 'telephone' in column_name) :
         return fake.random_number(10) 
@@ -348,11 +318,11 @@ def finding_foreign_key(column_detail_list):
 def generagte_insert_query(table_name, col_details,db_name):
     
     foreign_key = finding_foreign_key(col_details)
-    print(foreign_key)
+    # print(foreign_key)
 
     str1 =  col_details.split(",")
     str1 = [x for x in str1 if 'foreign' not in x.lower()]
-    print(str1)
+    # print(str1)
    
 
     str2 = []
@@ -365,13 +335,13 @@ def generagte_insert_query(table_name, col_details,db_name):
     columns_info = [ ]
     for i in str2:
 
-        if (len(i) > 2) and (i[2].lower() == 'primary key' or i[2].lower() == 'unique' ):
+        if (len(i) > 2) and (i[2].lower().strip() == 'primary key' or i[2].lower().strip() == 'unique' ):
             columns_info.append([i[0].lower().strip(),  i[1].lower().strip(),  i[2].lower().strip() ])
         else:
             columns_info.append([i[0].lower().strip()  , i[1].lower().strip() ])
     
-    # print(columns_info)
-    # print('done')
+    print(columns_info)
+    print('done')
 
 
     
@@ -384,7 +354,7 @@ def generagte_insert_query(table_name, col_details,db_name):
             print('fk')
 
             index = foreign_key[0].index(i[0].lower().strip())
-            print(index)
+            # print(index)
 
 
             try:

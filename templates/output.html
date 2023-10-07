@@ -28,19 +28,19 @@
     <hr>
 
 
-    {% for i in messages %}
+    {% for message in messages %}
 
-        {% if i[2]=='Table created successfully' or i[2]=='Table already exists.' %}
+        {% if message[2]=='Table created successfully' or message[2]=='Table already exists.' %}
         <div class="success">
-            <h3>{{ i[0] }} : {{ i[1] }}</h3>
-            <p>{{ i[2] }}</p>
+            <h3>{{ message[0] }} : {{ message[1] }}</h3>
+            <p>{{ message[2] }}</p>
         </div>
 
 
-        {% elif i[2]!='Table created successfully' %}
+        {% elif message[2]!='Table created successfully' %}
         <div class="error">
-            <h3>{{ i[0] }} : {{ i[1] }}</h3>
-            <p>{{ i[2] }}</p>
+            <h3>{{ message[0] }} : {{ message[1] }}</h3>
+            <p>{{ message[2] }}</p>
             <a onclick="goBack()"> Go Back to fix Error </a>
         </div>
 

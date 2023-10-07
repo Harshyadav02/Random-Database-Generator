@@ -17,7 +17,6 @@ db_config = {
 app = Flask(__name__)
 
 
-#--------------------------------------------------------------------
 
 #  function for creating a table
 def create_table(column_detail, table_name):
@@ -29,7 +28,6 @@ def create_table(column_detail, table_name):
     str2 = []
     
     # splitting value by ":" and storing in str2
-    
     for i in str1:
         s = i.split(":")
         str2.append(s)
@@ -51,7 +49,8 @@ def create_table(column_detail, table_name):
 
     # returning the query
     return query
-#---------------------------------------------------------------------
+
+
 
 #  function to generate schema and for download that
 def generate_schema_sql(db_name):
@@ -70,11 +69,8 @@ def generate_schema_sql(db_name):
         schema_sql = ''' '''
         for table_name in tables:
 
-
-            # print(table_name)
             cursor.execute(f"SHOW CREATE TABLE {table_name}")
             create_query = cursor.fetchone()[1]
-            # print(create_query)
 
             schema_sql += f"\n\n-- Table: {table_name}\n"
             schema_sql += f"{create_query}\n;"
@@ -88,7 +84,7 @@ def generate_schema_sql(db_name):
 
     return schema_sql
 
-#----------------------------------------------------------------------------
+
 
 # Function to generate fake data based on data type
 def generate_fake_data(column_name, data_type):
@@ -100,16 +96,12 @@ def generate_fake_data(column_name, data_type):
 
     if 'varchar' in data_type:
         max_length = int(data_type.replace('varchar', '').strip('()'))
-        # print(max_length)
 
     elif 'char' in data_type:
         try:
             max_length = int(data_type.replace('char', '').strip('()'))
         except:
             max_length = 1
-
-        # print(max_length)
-
 
 
     if 'bool' in data_type or 'boolean' in data_type:
@@ -262,28 +254,13 @@ def generate_fake_data(column_name, data_type):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-#----------------------------------------------------------
 # to handle foreign keys.
-
 def finding_foreign_key(column_detail_list):
 
     column_detail_list = column_detail_list.split(',')
 
     temp_fk = [x for x in column_detail_list if 'foreign' in x.lower() ]
-    # print(temp_fk)
 
-    
     temp_detail = []
     f_k_details = ''
 
@@ -308,23 +285,13 @@ def finding_foreign_key(column_detail_list):
     return foreign_key
 
 
-
-
-
-
-
-
-
 def generagte_insert_query(table_name, col_details,db_name):
     
     foreign_key = finding_foreign_key(col_details)
-    # print(foreign_key)
 
     str1 =  col_details.split(",")
     str1 = [x for x in str1 if 'foreign' not in x.lower()]
-    # print(str1)
    
-
     str2 = []
     for i in str1:
         s = i.split(":")
@@ -339,9 +306,6 @@ def generagte_insert_query(table_name, col_details,db_name):
             columns_info.append([i[0].lower().strip(),  i[1].lower().strip(),  i[2].lower().strip() ])
         else:
             columns_info.append([i[0].lower().strip()  , i[1].lower().strip() ])
-    
-    print(columns_info)
-    print('done')
 
 
     
@@ -354,7 +318,6 @@ def generagte_insert_query(table_name, col_details,db_name):
             print('fk')
 
             index = foreign_key[0].index(i[0].lower().strip())
-            # print(index)
 
 
             try:
@@ -368,13 +331,12 @@ def generagte_insert_query(table_name, col_details,db_name):
                 all_fk_value = cursor.fetchall()
                 
                 all_data = [ x[0] for x in all_fk_value ]
-                # all_data = tuple(all_data)
-
-                print( 'all_data: ' , all_data)
                 fake_data.append(fake.random_element(elements=all_data))
+
             except mysql.connector.Error as err:
                 print(err)
                 pass
+
             finally:
                 cursor.close()
                 connection.close()
@@ -395,11 +357,10 @@ def generagte_insert_query(table_name, col_details,db_name):
                 cursor.execute(f"select {column_name} from {table_name}")
                 result = cursor.fetchall()
 
-                # print(result)
 
                 # finding all values from table of primary key.
                 all_value = [ x[0] for x in result ]
-                # print(all_value)
+
 
                 real_data = generate_fake_data(column_name, data_type)
                 print(real_data)
@@ -423,15 +384,12 @@ def generagte_insert_query(table_name, col_details,db_name):
             print('normal')
             column_name = i[0]
             data_type = i[1]
-            # print( column_name, data_type)
             fake_data.append(generate_fake_data(column_name, data_type))
     
 
 
 
     # Print the generated fake data as comma-separated values
-    # print(fake_data)
-
     if len(fake_data)==1:
         if type(fake_data[0]) == str:
             insert_query = f"insert into {table_name} values ('{fake_data[0]}') ;"
@@ -447,4 +405,3 @@ def generagte_insert_query(table_name, col_details,db_name):
         print(insert_query)
         return insert_query
 
-#----------------------------------------------------------------------------

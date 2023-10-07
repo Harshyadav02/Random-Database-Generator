@@ -39,12 +39,8 @@ def create_tables():
 @app.route('/submit_table_details/<db_name>/<int:num_tables>/', methods=['POST'])
 def table_details(db_name, num_tables):
 
-
     table_name_list = request.form.getlist('tableName')
     column_details_list = request.form.getlist('columnDetails')
-
-    # print(table_name_list)
-    # print(column_details_list)
 
     messages = []
 
@@ -69,14 +65,11 @@ def table_details(db_name, num_tables):
             cursor.execute(f"SHOW TABLES LIKE '{table_name}' ")
             existing_table = cursor.fetchone()
 
-            # print(existing_table)
-
             if existing_table:
                 existing_table = existing_table[0]
                 messages.append( (f'Table {num}', table_name, 'Table already exists.') )
                 num += 1
-                # print(existing_table)
-                # print(messages)
+
             else:
                 
                 # Execute the create table query
@@ -86,10 +79,9 @@ def table_details(db_name, num_tables):
                 num += 1
 
                 try:
-                    for i in range(100):
+                    for i in range(500):
                         insert_query = generagte_insert_query(table_name, column_details, db_name)
                         cursor.execute(insert_query)
-                        # print(insert_query)
                         connection.commit()
 
                 except mysql.connector.Error as err:
@@ -120,8 +112,6 @@ def download_schema(db_name):
     if request.method == 'POST':
 
         schema_sql = generate_schema_sql(db_name)
-
-        # print(schema_sql)
 
         # Save the SQL to a file
         file_path = f"{db_name}_schema.sql"

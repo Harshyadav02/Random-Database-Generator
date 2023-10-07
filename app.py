@@ -21,14 +21,10 @@ db_config = {
 app = Flask(__name__)
 
 
-
-
-
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 # this function will be triggered by index.html
 @app.route('/create_tables/', methods=['POST'])
@@ -134,11 +130,6 @@ def download_schema(db_name):
 
         # Provide the file for download
         return send_file(file_path, as_attachment=True) # If set to True, the file will be sent as an attachment
-
-
-
-
-
 
 
 if __name__ == '__main__':

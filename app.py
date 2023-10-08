@@ -56,10 +56,7 @@ def table_details(db_name, num_tables):
     num = 1
     for table_name, column_details in zip(table_name_list, column_details_list):
         create_query = create_table(column_details, table_name)
-        print(create_query)
         
-
-
         try:
 
             cursor.execute(f"SHOW TABLES LIKE '{table_name}' ")
@@ -79,7 +76,7 @@ def table_details(db_name, num_tables):
                 num += 1
 
                 try:
-                    for i in range(500):
+                    for entry in range(5):
                         insert_query = generagte_insert_query(table_name, column_details, db_name)
                         cursor.execute(insert_query)
                         connection.commit()
@@ -97,8 +94,8 @@ def table_details(db_name, num_tables):
     connection.close()
 
     total = 0
-    for i in messages:
-        if i[2]=='Table created successfully' or i[2]=='Table already exists.':
+    for message in messages:
+        if message[2]=='Table created successfully' or message[2]=='Table already exists.':
             total += 1
 
     return render_template('output.html', messages=messages, total= total, num_tables=num_tables, db_name=db_name )

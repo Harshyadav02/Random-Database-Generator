@@ -81,7 +81,19 @@ Change your working directory to the project folder:
 
     cd Random-Database-Generator
 
-### 4.3 Run the Application
+### 4.3 Update Database Credentials in app.py
+
+Before running the application, make sure to update the database credentials in the `app.py` file. Open the `app.py` file and locate the following section:
+
+
+    # Define your MySQL database configuration
+    db_config = {
+        'host': 'Your-localhost',
+        'user': 'your-root',
+        'password': 'Your-password'
+    }
+
+### 4.4 Run the Application
 You can run the application using Flask. Simply execute the following command:
 
     flask --app app.py run

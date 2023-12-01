@@ -57,16 +57,6 @@ Follow the official installation instructions for MySQL based on your OS:
 - [MySQL Installation Guide for Windows](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/windows-installation.html)
 
 
-### 3.4 Installing Python Modules
-
-Once you have Git, Python, and MySQL installed, you'll need to install Python modules required for this project. You can do this using pip, Python's package manager.
-Open your terminal and run the following commands:
-
-    pip install mysql-connector-python
-    pip install flask 
-    pip install faker
-
-
 ## 4. Usage
 
 ### 4.1 Clone the Repository
@@ -93,7 +83,15 @@ Before running the application, make sure to update the database credentials in 
         'password': 'Your-password'
     }
 
-### 4.4 Run the Application
+### 4.4 Installing Python Modules
+
+Once you have Git, Python, and MySQL installed, you'll need to install Python modules required for this project. You can do this using pip, Python's package manager.
+Open your terminal and run the following commands:
+
+    pip install -r requirements.txt
+
+
+### 4.5 Run the Application
 You can run the application using Flask. Simply execute the following command:
 
     flask --app app.py run

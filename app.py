@@ -131,6 +131,3 @@ def table_details(db_name, num_tables):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-# # lokesh@notebook:~$ psql
-# psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  role "lokesh" does not exist

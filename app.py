@@ -1,12 +1,12 @@
-
 from flask import Flask, render_template, request, redirect, url_for, send_file
-import mysql.connector
+import psycopg2
 from faker import Faker
 import random
+import time
 from all_functions import create_table                      # def create_table(column_detail, table_name)
 from all_functions import generate_fake_data                # def generate_fake_data(column_name, data_type):
 from all_functions import generagte_insert_query            # def generate_schema_sql(db_name)
-from all_functions import generate_schema_sql
+# from all_functions import generate_schema_sql
 
 # Initialize the Faker instance
 fake = Faker()
@@ -14,8 +14,10 @@ fake = Faker()
 # Define your MySQL database configuration
 db_config = {
     'host': 'localhost',
-    'user': 'root',
-    'password': '9644'
+    'user': 'postgres',
+    'password': 'root',
+    'dbname': 'postgres',
+    'port': 5432
 }
 
 app = Flask(__name__)
@@ -44,13 +46,36 @@ def table_details(db_name, num_tables):
 
     messages = []
 
-    connection = mysql.connector.connect(**db_config)
+    connection = psycopg2.connect(**db_config)
+    # Set autocommit mode to True
+    connection.autocommit = True
     cursor = connection.cursor()
 
-    # Create database if not exists
-    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
-    cursor.execute(f"USE {db_name}")
+    # Check if the database already exists
+    cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = '{db_name}'")
+    exists = cursor.fetchone()
 
+    # Create database if not exists
+    if not exists:
+        cursor.execute(f"CREATE DATABASE {db_name}")
+    
+    # Close the cursor and connection to commit the database creation outside of the transaction
+    cursor.close()
+    connection.close()
+
+     # Reset autocommit mode to False
+    # connection.autocommit = False
+
+    # Reconnect to the newly created database
+    connection = psycopg2.connect(
+        database=db_name,
+        user=db_config['user'],
+        password=db_config['password'],
+        host=db_config['host'],
+        port=db_config['port']
+    )
+
+    cursor = connection.cursor()
 
     # Iterate through the provided table names and column details
     num = 1
@@ -59,7 +84,7 @@ def table_details(db_name, num_tables):
         
         try:
 
-            cursor.execute(f"SHOW TABLES LIKE '{table_name}' ")
+            cursor.execute(f"SELECT table_name FROM information_schema.tables WHERE table_name LIKE '{table_name}' ")
             existing_table = cursor.fetchone()
 
             if existing_table:
@@ -81,15 +106,18 @@ def table_details(db_name, num_tables):
                         cursor.execute(insert_query)
                         connection.commit()
 
-                except mysql.connector.Error as err:
+                except psycopg2.Error as err:
                     messages.append( (f'Table Name : ', f'{table_name} insertion error', err) )
 
 
-        except mysql.connector.Error as err:
+        except psycopg2.Error as err:
+            # Rollback the transaction on exception
+            connection.rollback()
             cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
             messages.append( (f'Table {num}', f'{table_name} creation error', err) )
             num += 1
     
+    time.sleep(2)
     cursor.close()
     connection.close()
 
@@ -101,23 +129,8 @@ def table_details(db_name, num_tables):
     return render_template('output.html', messages=messages, total= total, num_tables=num_tables, db_name=db_name )
 
 
-
-#  to download the schema file
-@app.route("/download_schema/<db_name>", methods=['GET','POST'])
-def download_schema(db_name):
-
-    if request.method == 'POST':
-
-        schema_sql = generate_schema_sql(db_name)
-
-        # Save the SQL to a file
-        file_path = f"{db_name}_schema.sql"
-        with open(file_path, 'w') as file:
-            file.write(schema_sql)
-
-        # Provide the file for download
-        return send_file(file_path, as_attachment=True) # If set to True, the file will be sent as an attachment
-
-
 if __name__ == '__main__':
     app.run(debug=True)
+
+# # lokesh@notebook:~$ psql
+# psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  role "lokesh" does not exist

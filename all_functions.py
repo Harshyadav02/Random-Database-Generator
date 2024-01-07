@@ -1,19 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file
-import mysql.connector
+import psycopg2
 from faker import Faker
 import random
-
+import time
 
 # Initialize the Faker instance
 fake = Faker()
-
-# # Define your MySQL database configuration
-# db_config = {
-#     'host': 'localhost',
-#     'user': 'root',
-#     'password': '9644'
-# }
-
 
 #---------------------------------------------------
 
@@ -50,37 +42,6 @@ def create_table(column_detail, table_name):
     return query
 
 #-----------------------------------------------------
-
-#  function to generate schema and for download that
-def generate_schema_sql(db_name):
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-
-        # Select the database
-        cursor.execute(f"USE {db_name}")
-
-        # Get the list of tables in the database
-        cursor.execute("SHOW TABLES")
-        tables = [table_details[0] for table_details in cursor.fetchall()]
-
-        schema_sql = ''' '''
-        for table_name in tables:
-
-            cursor.execute(f"SHOW CREATE TABLE {table_name}")
-            create_query = cursor.fetchone()[1]
-
-            schema_sql += f"\n\n-- Table: {table_name}\n"
-            schema_sql += f"{create_query}\n;"
-
-    except mysql.connector.Error as err:
-        return f"Error: {err}"
-
-    finally:
-        cursor.close()
-        connection.close()
-
-    return schema_sql
 
 #----------------------------------------------------------------------------------------------------------
 # function to generate fake data for int datatype
@@ -314,12 +275,12 @@ def generagte_insert_query(table_name, col_details,db_name):
 
 
             try:
-                connection = mysql.connector.connect(**db_config)
+                connection = psycopg2.connect(**db_config)
                 cursor = connection.cursor()
 
 
 
-                cursor.execute(f"USE {db_name}")
+                cursor.execute(f"\c {db_name}")
                 cursor.execute(f"select {foreign_key[2][index]} from {foreign_key[1][index]}")
                 all_fk_value = cursor.fetchall()
                 
@@ -328,11 +289,12 @@ def generagte_insert_query(table_name, col_details,db_name):
 
                 fake_data.append(fake.random_element(elements=all_data))
 
-            except mysql.connector.Error as err:
+            except psycopg2.Error as err:
                 print(err)
                 pass
 
             finally:
+                time.sleep(2)
                 cursor.close()
                 connection.close()
         
@@ -345,10 +307,10 @@ def generagte_insert_query(table_name, col_details,db_name):
             data_type = col_info[1]
 
             try:
-                connection = mysql.connector.connect(**db_config)
+                connection = psycopg2.connect(**db_config)
                 cursor = connection.cursor()
 
-                cursor.execute(f"USE {db_name}")
+                cursor.execute(f"\c {db_name}")
                 cursor.execute(f"select {column_name} from {table_name}")
                 result = cursor.fetchall()
 
@@ -370,11 +332,12 @@ def generagte_insert_query(table_name, col_details,db_name):
                         print('find duplicate: ', real_data)
                         real_data = generate_fake_data(column_name, data_type)
 
-            except mysql.connector.Error as err:
+            except psycopg2.Error as err:
                 print(err)
                 pass
 
             finally:
+                time.sleep(2)
                 cursor.close()
                 connection.close()
 

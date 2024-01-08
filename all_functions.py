@@ -221,6 +221,38 @@ def finding_foreign_key(column_detail_list):
 
     return foreign_key
 
+
+# Function to generate schema SQL for PostgreSQL
+def generate_schema_sql(db_name, **new_db_config):
+    try:
+        connection = psycopg2.connect(**new_db_config)
+        cursor = connection.cursor()
+
+        # Get the list of tables in the database
+        cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+        tables = [table_details[0] for table_details in cursor.fetchall()]
+
+        schema_sql = ''' '''
+        for table_name in tables:
+            cursor.execute(f"SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name = '{table_name}'")
+            columns = cursor.fetchall()
+
+            # Generate CREATE TABLE statement
+            schema_sql += f"\n\n-- Table: {table_name}\n"
+            schema_sql += f"CREATE TABLE {table_name} (\n"
+            schema_sql += ",\n".join([f"    {column[1]} {column[2]}" for column in columns])
+            schema_sql += "\n);\n"
+
+    except psycopg2.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        pass
+        cursor.close()
+        connection.close()
+
+    return schema_sql
+
 # Function to generate insert query for generated table.
 def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
 
@@ -228,6 +260,9 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
     connection = psycopg2.connect(**new_db_config)
     cursor = connection.cursor()
 
+    print(table_name)
+    print(col_details)
+    print(db_name)
     # Extract foreign key details.
     foreign_key = finding_foreign_key(col_details)
 
@@ -242,7 +277,7 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
     for column in column_list:
         s = column.split(":")
         column_details_list.append(s)
-    # print(column_details_list)
+    print(column_details_list)
 
 
     columns_info = []
@@ -251,7 +286,7 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
             columns_info.append([col_info[0].strip(), col_info[1].strip(), col_info[2].strip()])
         else:
             columns_info.append([col_info[0].strip(), col_info[1].strip()])
-    # print(col_info)
+    print(col_info)
 
 
     fake_data = []

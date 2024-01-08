@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, send_file
 import psycopg2
 from faker import Faker
 import random
-import time
 from all_functions import create_table                      # def create_table(column_detail, table_name)
 from all_functions import generate_fake_data                # def generate_fake_data(column_name, data_type):
 from all_functions import generagte_insert_query            # def generate_schema_sql(db_name)
@@ -66,15 +65,17 @@ def table_details(db_name, num_tables):
      # Reset autocommit mode to False
     # connection.autocommit = False
 
-    # Reconnect to the newly created database
-    connection = psycopg2.connect(
-        database=db_name,
-        user=db_config['user'],
-        password=db_config['password'],
-        host=db_config['host'],
-        port=db_config['port']
-    )
+    # Define your MySQL database configuration
+    new_db_config = {
+        'host': 'localhost',
+        'user': 'postgres',
+        'password': 'root',
+        'dbname': db_name,
+        'port': 5432
+    }
 
+    # Reconnect to the newly created database
+    connection = psycopg2.connect(**new_db_config)
     cursor = connection.cursor()
 
     # Iterate through the provided table names and column details
@@ -100,9 +101,25 @@ def table_details(db_name, num_tables):
                 messages.append( (f'Table {num}', table_name, 'Table created successfully') )
                 num += 1
 
+
+
+                # 
+                # Close the cursor and connection to commit the database creation outside of the transaction
+                cursor.close()
+                connection.close()
+
+                # Reset autocommit mode to False
+                # connection.autocommit = False
+
+                # Reconnect to the newly created database
+                connection = psycopg2.connect(**new_db_config)
+                cursor = connection.cursor()
+                # 
+
+
                 try:
                     for entry in range(5):
-                        insert_query = generagte_insert_query(table_name, column_details, db_name)
+                        insert_query = generagte_insert_query(table_name, column_details, db_name, **new_db_config)
                         cursor.execute(insert_query)
                         connection.commit()
 
@@ -116,8 +133,7 @@ def table_details(db_name, num_tables):
             cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
             messages.append( (f'Table {num}', f'{table_name} creation error', err) )
             num += 1
-    
-    time.sleep(2)
+
     cursor.close()
     connection.close()
 

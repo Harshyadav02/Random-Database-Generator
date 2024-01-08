@@ -1,19 +1,10 @@
 import psycopg2
 from faker import Faker
 import random
-import time
 
 # Initialize the Faker instance
 fake = Faker()
 
-# Define your PostgreSQL database configuration
-db_config = {
-    'host': 'localhost',
-    'user': 'postgres',
-    'password': 'root',
-    'dbname': 'postgres',
-    'port': 5432
-}
 
 # Function for creating a table
 def create_table(column_detail, table_name):
@@ -231,34 +222,44 @@ def finding_foreign_key(column_detail_list):
     return foreign_key
 
 # Function to generate insert query for generated table.
-def generagte_insert_query(table_name, col_details, db_name):
+def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
+
+    # Making connection
+    connection = psycopg2.connect(**new_db_config)
+    cursor = connection.cursor()
+
     # Extract foreign key details.
     foreign_key = finding_foreign_key(col_details)
 
     # Split col_details by ","
     column_list =  col_details.split(",")
     column_list = [table_details for table_details in column_list if 'foreign' not in table_details.lower()]
-   
+    
+
     column_details_list = []
+    
     
     for column in column_list:
         s = column.split(":")
         column_details_list.append(s)
-    
+    # print(column_details_list)
+
+
     columns_info = []
     for col_info in column_details_list:
         if (len(col_info) > 2) and (col_info[2].lower().strip() == 'primary key' or col_info[2].lower().strip() == 'unique'):
             columns_info.append([col_info[0].strip(), col_info[1].strip(), col_info[2].strip()])
         else:
             columns_info.append([col_info[0].strip(), col_info[1].strip()])
+    # print(col_info)
+
 
     fake_data = []
     for col_info in columns_info:
         if col_info[0].strip() in foreign_key[0]:
             index = foreign_key[0].index(col_info[0].strip())
             try:
-                connection = psycopg2.connect(**db_config)
-                cursor = connection.cursor()
+
                 cursor.execute(f"SELECT {foreign_key[2][index]} FROM {foreign_key[1][index]}")
                 all_fk_value = cursor.fetchall()
                 all_data = [data[0] for data in all_fk_value]
@@ -267,33 +268,37 @@ def generagte_insert_query(table_name, col_details, db_name):
                 print(err)
                 pass
             finally:
-                time.sleep(2)
                 cursor.close()
                 connection.close()
         elif (len(col_info) > 2) and (col_info[2].lower() == 'primary key' or col_info[2].lower() == 'unique'):
             column_name = col_info[0]
             data_type = col_info[1]
             try:
-                connection = psycopg2.connect(**db_config)
-                cursor = connection.cursor()
+                # connection = psycopg2.connect(**new_db_config)
+                # cursor = connection.cursor()
                 cursor.execute(f"SELECT {column_name} FROM {table_name}")
                 result = cursor.fetchall()
                 all_value = [value[0] for value in result]
+                print(all_value)
                 real_data = generate_fake_data(column_name, data_type)
-                while True:
-                    if real_data not in all_value:
-                        fake_data.append(real_data)
-                        break
-                    else:
-                        print('find duplicate: ', real_data)
-                        real_data = generate_fake_data(column_name, data_type)
+                print("genrated data : ", real_data)
+
+                # Check if the generated data already exists in the table
+                while real_data in all_value:
+                    print('find duplicate: ', real_data)
+                    real_data = generate_fake_data(column_name, data_type)
+
+                fake_data.append(real_data)
+
+                print("fk data : ", fake_data)
+
             except psycopg2.Error as err:
                 print(err)
                 pass
             finally:
-                time.sleep(2)
                 cursor.close()
                 connection.close()
+
         else:
             column_name = col_info[0]
             data_type = col_info[1]
@@ -302,10 +307,14 @@ def generagte_insert_query(table_name, col_details, db_name):
     if len(fake_data) == 1:
         if type(fake_data[0]) == str:
             insert_query = f"INSERT INTO {table_name} VALUES ('{fake_data[0]}');"
+            print(insert_query)
         else:
             insert_query = f"INSERT INTO {table_name} VALUES ({fake_data[0]});"
+            print(insert_query)
     else:
         fake_data = tuple(fake_data)
         insert_query = f"INSERT INTO {table_name} VALUES {fake_data};"
+        print(insert_query)
 
+    print(fake_data)
     return insert_query

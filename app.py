@@ -5,7 +5,7 @@ import random
 from all_functions import create_table                      # def create_table(column_detail, table_name)
 from all_functions import generate_fake_data                # def generate_fake_data(column_name, data_type):
 from all_functions import generagte_insert_query            # def generate_schema_sql(db_name)
-# from all_functions import generate_schema_sql
+from all_functions import generate_schema_sql
 
 # Initialize the Faker instance
 fake = Faker()
@@ -143,6 +143,32 @@ def table_details(db_name, num_tables):
             total += 1
 
     return render_template('output.html', messages=messages, total= total, num_tables=num_tables, db_name=db_name )
+
+
+# Route to download PostgreSQL schema
+@app.route("/download_schema/<db_name>", methods=['GET', 'POST'])
+def download_schema(db_name):
+
+    # Define your MySQL database configuration
+    new_db_config = {
+        'host': 'localhost',
+        'user': 'postgres',
+        'password': 'root',
+        'dbname': db_name,
+        'port': 5432
+    }
+
+
+    if request.method == 'POST':
+        schema_sql = generate_schema_sql(db_name, **new_db_config)
+
+        # Save the SQL to a file
+        file_path = f"{db_name}_schema.sql"
+        with open(file_path, 'w') as file:
+            file.write(schema_sql)
+
+        # Provide the file for download
+        return send_file(file_path, as_attachment=True)
 
 
 if __name__ == '__main__':

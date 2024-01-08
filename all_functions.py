@@ -7,12 +7,6 @@ import random
 # Initialize the Faker instance
 fake = Faker()
 
-# # Define your MySQL database configuration
-# db_config = {
-#     'host': 'localhost',
-#     'user': 'root',
-#     'password': '9644'
-# }
 
 # app = Flask(__name__)
 

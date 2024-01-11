@@ -65,7 +65,7 @@ def table_details(db_name, num_tables):
      # Reset autocommit mode to False
     # connection.autocommit = False
 
-    # Define your MySQL database configuration
+    # Defining new database configuration
     new_db_config = {
         'host': 'localhost',
         'user': 'postgres',

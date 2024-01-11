@@ -260,9 +260,9 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
     connection = psycopg2.connect(**new_db_config)
     cursor = connection.cursor()
 
-    print(table_name)
-    print(col_details)
-    print(db_name)
+    # print(table_name)
+    # print(col_details)
+    # print(db_name)
     # Extract foreign key details.
     foreign_key = finding_foreign_key(col_details)
 
@@ -277,7 +277,7 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
     for column in column_list:
         s = column.split(":")
         column_details_list.append(s)
-    print(column_details_list)
+    # print(column_details_list)
 
 
     columns_info = []
@@ -300,7 +300,7 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
                 all_data = [data[0] for data in all_fk_value]
                 fake_data.append(fake.random_element(elements=all_data))
             except psycopg2.Error as err:
-                print(err)
+                # print(err)
                 pass
             finally:
                 cursor.close()
@@ -309,26 +309,24 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
             column_name = col_info[0]
             data_type = col_info[1]
             try:
-                # connection = psycopg2.connect(**new_db_config)
-                # cursor = connection.cursor()
                 cursor.execute(f"SELECT {column_name} FROM {table_name}")
                 result = cursor.fetchall()
                 all_value = [value[0] for value in result]
-                print(all_value)
+                # print(all_value)
                 real_data = generate_fake_data(column_name, data_type)
-                print("genrated data : ", real_data)
+                # print("genrated data : ", real_data)
 
                 # Check if the generated data already exists in the table
                 while real_data in all_value:
-                    print('find duplicate: ', real_data)
+                    # print('find duplicate: ', real_data)
                     real_data = generate_fake_data(column_name, data_type)
 
                 fake_data.append(real_data)
 
-                print("fk data : ", fake_data)
+                # print("fk data : ", fake_data)
 
             except psycopg2.Error as err:
-                print(err)
+                # print(err)
                 pass
             finally:
                 cursor.close()
@@ -342,14 +340,14 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
     if len(fake_data) == 1:
         if type(fake_data[0]) == str:
             insert_query = f"INSERT INTO {table_name} VALUES ('{fake_data[0]}');"
-            print(insert_query)
+            # print(insert_query)
         else:
             insert_query = f"INSERT INTO {table_name} VALUES ({fake_data[0]});"
-            print(insert_query)
+            # print(insert_query)
     else:
         fake_data = tuple(fake_data)
         insert_query = f"INSERT INTO {table_name} VALUES {fake_data};"
-        print(insert_query)
+        # print(insert_query)
 
-    print(fake_data)
+    # print(fake_data)
     return insert_query

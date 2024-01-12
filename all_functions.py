@@ -203,6 +203,8 @@ def finding_foreign_key(column_detail_list):
     column_detail_list = column_detail_list.split(',')
     temp_fk = [column for column in column_detail_list if 'foreign' in column.lower()]
     temp_detail = []
+    # print(temp_detail)
+
     f_k_details = ''
 
     for details in temp_fk:
@@ -219,6 +221,7 @@ def finding_foreign_key(column_detail_list):
         foreign_key[1].append(foreign_key_detail[4].strip())
         foreign_key[2].append(foreign_key_detail[5].strip())
 
+    # print(foreign_key)
     return foreign_key
 
 
@@ -260,11 +263,14 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
     connection = psycopg2.connect(**new_db_config)
     cursor = connection.cursor()
 
+    # print(col_details)
+
     # print(table_name)
     # print(col_details)
     # print(db_name)
     # Extract foreign key details.
     foreign_key = finding_foreign_key(col_details)
+    print(f'fk : {foreign_key}')
 
     # Split col_details by ","
     column_list =  col_details.split(",")
@@ -286,7 +292,8 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
             columns_info.append([col_info[0].strip(), col_info[1].strip(), col_info[2].strip()])
         else:
             columns_info.append([col_info[0].strip(), col_info[1].strip()])
-    print(col_info)
+    # print(col_info)
+
 
 
     fake_data = []
@@ -297,7 +304,9 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
 
                 cursor.execute(f"SELECT {foreign_key[2][index]} FROM {foreign_key[1][index]}")
                 all_fk_value = cursor.fetchall()
+                # print(all_fk_value)
                 all_data = [data[0] for data in all_fk_value]
+                print(all_data)
                 fake_data.append(fake.random_element(elements=all_data))
             except psycopg2.Error as err:
                 # print(err)
@@ -336,6 +345,7 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
             column_name = col_info[0]
             data_type = col_info[1]
             fake_data.append(generate_fake_data(column_name, data_type))
+    print(fake_data)
 
     if len(fake_data) == 1:
         if type(fake_data[0]) == str:
@@ -347,7 +357,8 @@ def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
     else:
         fake_data = tuple(fake_data)
         insert_query = f"INSERT INTO {table_name} VALUES {fake_data};"
-        # print(insert_query)
+        print(insert_query)
+        print()
 
     # print(fake_data)
     return insert_query

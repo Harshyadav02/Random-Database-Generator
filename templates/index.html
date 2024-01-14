@@ -1,26 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Database Tables</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index_style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wyzy5qDIxPgeNfDAHRg32mM8E5tRByQG5" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha256-B4/1Lr3FZ9vESbqStCQkO2gH8wq+twTMbU7R3UGbMn4=" crossorigin="anonymous" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_style.css') }}">
 
 </head>
 <body>
-    <div class="container">
 
-        <h1>Create Database Tables</h1>
+  <header>
+    <h1>Database Selection</h1>
+  </header>
 
-        <form action="/create_tables/" method="post">
-            <label for="dbName">Database Name:</label>
-            <input type="text" id="dbName" name="dbName" placeholder="Enter Database Name" required>
+  <div class="database-container">
+    <a href="{{url_for('mysql_route')}}" class="database-link" >
+      <div class="database-option">
+       <img src="{{ url_for('static', filename='/images/mysql.png') }}
+       " alt="">
+      </div>
+    </a>
+    <a href="{{url_for('mongo_route')}}" class="database-link">
+      <div class="database-option">
+        <img src="{{ url_for('static', filename='/images/mongo.png') }}
+        " alt="">
+        
+      </div>
+    </a>
+    <a href="#" class="database-link">
+      <div class="database-option">
+        <img src="{{ url_for('static', filename='/images/postgres.png') }}" alt="">
+      </div>
+    </a>
+  </div>
 
-            <label for="numTables">Number of Tables:</label>
-            <input type="number" id="numTables" name="numTables" placeholder="Enter Number of Tables" required>
+  <div id="output"></div>
 
-            <button type="submit">Create Tables</button>
-        </form>
-    </div>
+  <footer>
+    <p>&copy; Developed by <a href="https://www.linkedin.com/in/anil-gehlot/">Anil Gehlot</a> | <a href="https://www.linkedin.com/in/harshyadav02/">Harsh Yadav</a> | <a href="https://www.linkedin.com/in/lokeshdangi/">Lokesh Dangi </a></p>
+  </footer>
+
+  
 </body>
 </html>

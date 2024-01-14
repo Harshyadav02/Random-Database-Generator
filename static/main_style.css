@@ -1,0 +1,101 @@
+body {
+      
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  background-color: #04AA6D; /* Belize Hole */
+  color: #fff;
+  padding: 10px 0;
+  text-align: center;
+}
+
+footer {
+  background-color: #04AA6D; /* Belize Hole */
+  color: #fff;
+  padding: 10px 0;
+  text-align: center;
+  margin-top: auto;
+}
+
+.database-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.database-option {
+  margin: 10px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 5px 8px 15px rgba(0.5, 0.5, 0.5, 0.5);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  height: 300px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.3s ease, z-index 0.3s ease; 
+
+}
+/* .database-option {
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, z-index 0.3s ease;
+  text-align: center;
+  height: 300px;
+  width: 300px;
+} */
+.database-option i {
+  margin-bottom: 10px;
+}
+
+.database-option p {
+  margin: 0;
+  color: #333; /* Dark Gray */
+  font-size: 1.5em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.database-option:hover {
+  /* background-color: #f0f0f0; */
+  transform: translateY(-10px);
+  z-index: 1;
+}
+
+.database-option.active {
+  background-color: #87ceeb; /* SkyBlue */
+  color: #fff;
+}
+
+#output {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 1.2em;
+}
+.database-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+@media screen and (max-width: 768px) {
+.database-option {
+  width: 100%; /* Make the items full width on screens smaller than 768px */
+}
+}

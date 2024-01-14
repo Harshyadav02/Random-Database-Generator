@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>collection Details</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_style.css') }}">
+</head>
+<body>
+    <div class="container">
+
+        <form action="/submit_collection_details/{{ database }}/{{ number_of_collections }}/" method="post">
+
+            <label for="dbName">Database Name:</label>
+            <input type="text" id="dbName" name="dbName" value=" {{ database }}" disabled required>
+
+            <h1>Enter collection Details </h1>
+
+            {% for number in range(1, number_of_collections + 1) %}
+
+                <h2>collection {{ number }}</h2>
+                <label for="tableName">collection Name:</label>
+                <input type="text" id="tableName" name="tableName" placeholder="Enter Table Name" required>
+
+                <label for="columnDetails">Document Details:</label>
+                <input type="text" id="columnDetails" name="columnDetails" placeholder="Enter all the keys of document  For Eg: name:string,age:int,salary:decimal,data:array,book:object"  required>
+
+                <br><br>
+            {% endfor %}
+
+            <button type="submit">Submit Collection Detail</button>
+        </form>
+    </div>
+</body>
+</html>

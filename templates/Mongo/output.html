@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection Creation Result</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='outer_style.css') }}">
+    <style>
+        button {
+            width: 100%;
+            background-color: #04AA6D;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+
+    </style>
+
+</head>
+<body>
+    <h1>Collection Creation Result</h1>
+    <hr>
+
+
+    {% for message in messages %}
+        
+        
+        <div class="success">
+            {{ message }}
+        </div>
+
+
+    {% endfor %}
+
+
+    {% for err in errors_list %}
+        
+        
+        <div class="error">
+            {{ err }}
+            <a onclick="goBack()"> Go Back to fix Error </a>
+
+        </div>
+
+    {% endfor %}
+
+
+
+    {% if error %}
+    <div class="error">
+        {{ error }}
+        <a onclick="goBack()"> Go Back to fix Error </a>
+     </div>
+    {% endif %} 
+
+    <br><br><br><br>
+
+    {% if db %}
+        <form action="/download_schema/{{db}}/" method="post">
+            <button type="submit">click here to download schema </button>
+        </form>
+    {% endif %} 
+
+
+
+    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

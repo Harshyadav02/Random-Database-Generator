@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Details</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_style.css') }}">
+</head>
+<body>
+    <div class="container">
+
+        <form action="/submit_table_details/{{ db_name }}/{{ num_tables }}/" method="post">
+
+            <label for="dbName">Database Name:</label>
+            <input type="text" id="dbName" name="dbName" value=" {{ db_name }}" disabled required>
+
+            <h1>Enter Table Details </h1>
+
+            {% for number in range(1, num_tables + 1) %}
+
+                <h2>Table {{ number }}</h2>
+                <label for="tableName">Table Name:</label>
+                <input type="text" id="tableName" name="tableName" placeholder="Enter Table Name" required>
+
+                <label for="columnDetails">Column Details:</label>
+                <input type="text" id="columnDetails" name="columnDetails" placeholder="columnName:datatype(size):primary key (or other):constraints          For Eg: student_id:int:primary key, student_name:varchar(20):not null, city:varchar(20):not null "  required>
+
+                <br><br>
+            {% endfor %}
+
+            <button type="submit">Submit Tables Detail</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -48,9 +48,9 @@ def create_table(column_detail, table_name):
 #-----------------------------------------------------
 
 #  function to generate schema and for download that
-def generate_schema_sql(db_name):
+def generate_schema_sql(db_name, **new_db_config):
     try:
-        connection = mysql.connector.connect(**db_config)
+        connection = mysql.connector.connect(**new_db_config)
         cursor = connection.cursor()
 
         # Select the database
@@ -271,8 +271,12 @@ def finding_foreign_key(column_detail_list):
 
 
 # function to generate insert query for generated table.
-def generagte_insert_query(table_name, col_details,db_name):
+def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
     
+    # Making again connection
+    connection = mysql.connector.connect(**new_db_config)
+    cursor = connection.cursor()
+
     # Extract foreign key details.
     foreign_key = finding_foreign_key(col_details)
     print(foreign_key)
@@ -341,8 +345,8 @@ def generagte_insert_query(table_name, col_details,db_name):
             data_type = col_info[1]
 
             try:
-                connection = mysql.connector.connect(**db_config)
-                cursor = connection.cursor()
+                # connection = mysql.connector.connect(**db_config)
+                # cursor = connection.cursor()
 
                 cursor.execute(f"USE {db_name}")
                 cursor.execute(f"select {column_name} from {table_name}")

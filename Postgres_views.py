@@ -2,10 +2,10 @@ from flask import Flask, render_template, request, redirect, url_for, send_file,
 import psycopg2
 from faker import Faker
 import random
-from all_functions import create_table                      # def create_table(column_detail, table_name)
-from all_functions import generate_fake_data                # def generate_fake_data(column_name, data_type):
-from all_functions import generagte_insert_query            # def generate_schema_sql(db_name)
-from all_functions import generate_schema_sql
+from Postgres_functions import create_table                      # def create_table(column_detail, table_name)
+from Postgres_functions import generate_fake_data                # def generate_fake_data(column_name, data_type):
+from Postgres_functions import generagte_insert_query            # def generate_schema_sql(db_name)
+from Postgres_functions import generate_schema_sql
 from config import pdb_config
 
 # Initialize the Faker instance
@@ -14,24 +14,17 @@ fake = Faker()
 # Blueprint
 postgres_db = Blueprint('postgres_db', __name__)
 
-
-
-@postgres_db.route('/')
-def index():
-    return render_template('index.html')
-
-
 # this function will be triggered by index.html
-@postgres_db.route('/create_tables/', methods=['POST'])
+@postgres_db.route('/create_tables_postgres/', methods=['POST'])
 def create_tables():
     global db_name 
     db_name  = request.form['dbName']
     num_tables = int(request.form['numTables'])
-    return render_template('table.html', db_name=db_name, num_tables=num_tables)
+    return render_template('Postgres/table.html', db_name=db_name, num_tables=num_tables)
 
 
 
-@postgres_db.route('/submit_table_details/<db_name>/<int:num_tables>/', methods=['POST'])
+@postgres_db.route('/submit_table_details_postgres/<db_name>/<int:num_tables>/', methods=['POST'])
 def table_details(db_name, num_tables):
 
     table_name_list = request.form.getlist('tableName')
@@ -84,7 +77,7 @@ def table_details(db_name, num_tables):
 
             if existing_table:
                 existing_table = existing_table[0]
-                messages.postgres_dbend( (f'Table {num}', table_name, 'Table already exists.') )
+                messages.append( (f'Table {num}', table_name, 'Table already exists.') )
                 num += 1
 
             else:
@@ -92,7 +85,7 @@ def table_details(db_name, num_tables):
                 # Execute the create table query
                 cursor.execute(create_query)
                 connection.commit()
-                messages.postgres_dbend( (f'Table {num}', table_name, 'Table created successfully') )
+                messages.append( (f'Table {num}', table_name, 'Table created successfully') )
                 num += 1
 
                 # 
@@ -116,14 +109,14 @@ def table_details(db_name, num_tables):
                         connection.commit()
 
                 except psycopg2.Error as err:
-                    messages.postgres_dbend( (f'Table Name : ', f'{table_name} insertion error', err) )
+                    messages.append( (f'Table Name : ', f'{table_name} insertion error', err) )
 
 
         except psycopg2.Error as err:
             # Rollback the transaction on exception
             connection.rollback()
             cursor.execute(f"DROP TABLE IF EXISTS {table_name};")
-            messages.postgres_dbend( (f'Table {num}', f'{table_name} creation error', err) )
+            messages.append( (f'Table {num}', f'{table_name} creation error', err) )
             num += 1
 
     cursor.close()
@@ -134,11 +127,11 @@ def table_details(db_name, num_tables):
         if message[2]=='Table created successfully' or message[2]=='Table already exists.':
             total += 1
 
-    return render_template('output.html', messages=messages, total= total, num_tables=num_tables, db_name=db_name )
+    return render_template('Postgres/output.html', messages=messages, total= total, num_tables=num_tables, db_name=db_name )
 
 
 # Route to download PostgreSQL schema
-@postgres_db.route("/download_schema/<db_name>", methods=['GET', 'POST'])
+@postgres_db.route("/download_schema_postgres/<db_name>", methods=['GET', 'POST'])
 def download_schema(db_name):
 
     # Define your MySQL database configuration

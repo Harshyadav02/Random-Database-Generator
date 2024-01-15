@@ -7,7 +7,6 @@ from Postgres_views import postgres_db
 # Initialize the Faker instance
 fake = Faker()
 
-
 # Initialize the Flask instance
 app = Flask(__name__)
 
@@ -41,6 +40,4 @@ def postgres_route() :
 
 
 if __name__ == '__main__':
-    
-    
     app.run(debug=True)

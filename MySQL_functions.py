@@ -384,9 +384,7 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
             data_type = col_info[1]
             fake_data.append(generate_fake_data(column_name, data_type))
     
-
-
-
+    
     # Print the generated fake data as comma-separated values
     if len(fake_data)==1:
         if type(fake_data[0]) == str:

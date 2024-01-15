@@ -36,6 +36,21 @@ def table_details(db_name, num_tables):
     cursor.execute(f"USE {db_name}")
 
 
+     # Close the cursor and connection to commit the database creation outside of the transaction
+    cursor.close()
+    connection.close()
+    # Defining new database configuration
+    new_db_config = {
+    'host': 'localhost',
+    'user': 'root',
+    'database': db_name,
+    'password': 'root'
+    }
+
+    connection = mysql.connector.connect(**new_db_config)
+    cursor = connection.cursor()
+
+
     # Iterate through the provided table names and column details
     num = 1
     for table_name, column_details in zip(table_name_list, column_details_list):
@@ -61,7 +76,7 @@ def table_details(db_name, num_tables):
 
                 try:
                     for entry in range(5):
-                        insert_query = generagte_insert_query(table_name, column_details, db_name)
+                        insert_query = generagte_insert_query(table_name, column_details, db_name, **new_db_config)
                         cursor.execute(insert_query)
                         connection.commit()
 
@@ -89,10 +104,17 @@ def table_details(db_name, num_tables):
 #  to download the schema file
 @mysql_db.route("/download_schema/<db_name>", methods=['GET','POST'])
 def download_schema(db_name):
+    # Defining new database configuration
+    new_db_config = {
+        'host': 'localhost',
+        'user': 'root',
+        'database': db_name,
+        'password': 'root'
+    }
 
     if request.method == 'POST':
 
-        schema_sql = generate_schema_sql(db_name)
+        schema_sql = generate_schema_sql(db_name, **new_db_config)
 
         # Save the SQL to a file
         file_path = f"{db_name}_schema.sql"

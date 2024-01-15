@@ -1,51 +1,42 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
-import mysql.connector
+import psycopg2
 from faker import Faker
 import random
 from config import db_config
-
 
 # Initialize the Faker instance
 fake = Faker()
 
 
-# app = Flask(__name__)
-
-#---------------------------------------------------
-
-#  function for creating a table
+# Function for creating a table
 def create_table(column_detail, table_name):
-
-    # splitting column_detail by ","   
+    # Splitting column_detail by ","
     column_list = column_detail.split(",")
     
-    # list to store the column details after splitting by ":"
+    # List to store the column details after splitting by ":"
     column_detail_list = []
     
-    # splitting each column by ":" and storing in column_detail_list
+    # Splitting each column by ":" and storing in column_detail_list
     for column in column_list:
         s = column.split(":")
         column_detail_list.append(s)
     
-    # MySQL create table query 
-    query = f"create table {table_name} ("
+    # PostgreSQL create table query 
+    query = f"CREATE TABLE {table_name} ("
        
-    # iterating through the list of column details 
+    # Iterating through the list of column details 
     for column_info in column_detail_list:
-
-        # iterating through the inner list
+        # Iterating through the inner list
         for detail in column_info:
             query += f" {detail}"
         if column_info != column_detail_list[-1]:
-            query += " , "
+            query += ","
     
-    # ending part of query
+    # Ending part of query
     query += ");"
 
-    # returning the MySQL create table query
+    # Returning the PostgreSQL create table query
     return query
 
-#-----------------------------------------------------
 
 #  function to generate schema and for download that
 def generate_schema_sql(db_name, **new_db_config):
@@ -53,32 +44,8 @@ def generate_schema_sql(db_name, **new_db_config):
         connection = mysql.connector.connect(**new_db_config)
         cursor = connection.cursor()
 
-        # Select the database
-        cursor.execute(f"USE {db_name}")
+# ------------------------fake data generation functions -------------------------------
 
-        # Get the list of tables in the database
-        cursor.execute("SHOW TABLES")
-        tables = [table_details[0] for table_details in cursor.fetchall()]
-
-        schema_sql = ''' '''
-        for table_name in tables:
-
-            cursor.execute(f"SHOW CREATE TABLE {table_name}")
-            create_query = cursor.fetchone()[1]
-
-            schema_sql += f"\n\n-- Table: {table_name}\n"
-            schema_sql += f"{create_query}\n;"
-
-    except mysql.connector.Error as err:
-        return f"Error: {err}"
-
-    finally:
-        cursor.close()
-        connection.close()
-
-    return schema_sql
-
-#----------------------------------------------------------------------------------------------------------
 # function to generate fake data for int datatype
 def int_fake_data(column_name):
 
@@ -93,8 +60,6 @@ def int_fake_data(column_name):
     
     else:
         return fake.random_int()
-    
-#----------------------------------------------------------------------------------------------------------
 
 # function to generate fake data for bigint datatype
 def bigint_fake_data(column_name):
@@ -214,6 +179,7 @@ def varchar_char_fake_data(column_name, data_type):
                 fake_txt = fake.text(max_length)
         return fake_txt
 #----------------------------------------------------------------------------------------------------------
+    
 
 # Function to generate fake data based on data type
 def generate_fake_data(column_name, data_type):
@@ -221,7 +187,7 @@ def generate_fake_data(column_name, data_type):
     column_name = column_name.strip().lower()
 
 
-    if 'varcahr' in data_type or 'char' in data_type:
+    if 'varchar' in data_type or 'char' in data_type:
         return varchar_char_fake_data(column_name, data_type)
 
     if 'bool' in data_type or 'boolean' in data_type:
@@ -239,36 +205,31 @@ def generate_fake_data(column_name, data_type):
 
 #----------------------------------------------------------------------------------------------------------
 
-
-# to handle foreign keys.
+# To handle foreign keys.
 def finding_foreign_key(column_detail_list):
-
     column_detail_list = column_detail_list.split(',')
-
-    temp_fk = [column for column in column_detail_list if 'foreign' in column.lower() ]
-
+    temp_fk = [column for column in column_detail_list if 'foreign' in column.lower()]
     temp_detail = []
+    # print(temp_detail)
+
     f_k_details = ''
 
     for details in temp_fk:
-
         f_k_details = details
-        f_k_details = f_k_details.replace( '(' , "")
-        f_k_details = f_k_details.replace( ')' , "")
+        f_k_details = f_k_details.replace('(', "")
+        f_k_details = f_k_details.replace(')', "")
         f_k_details = f_k_details.split()
         temp_detail.append(f_k_details)
 
-    foreign_key = [ [], [], [] ]    # columns name which are foreign key, table name has primary key, column name which are primary key   
-
+    foreign_key = [[], [], []]  # Columns name which are foreign key, table name has primary key, column name which are primary key
 
     for foreign_key_detail in temp_detail:
         foreign_key[0].append(foreign_key_detail[2].strip())
         foreign_key[1].append(foreign_key_detail[4].strip())
         foreign_key[2].append(foreign_key_detail[5].strip())
 
+    # print(foreign_key)
     return foreign_key
-#---------------------------------------------------------------------------
-
 
 # function to generate insert query for generated table.
 def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
@@ -277,128 +238,146 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
     connection = mysql.connector.connect(**new_db_config)
     cursor = connection.cursor()
 
+# Function to generate schema SQL for PostgreSQL
+def generate_schema_sql(db_name, **new_db_config):
+    try:
+        connection = psycopg2.connect(**new_db_config)
+        cursor = connection.cursor()
+
+        # Get the list of tables in the database
+        cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+        tables = [table_details[0] for table_details in cursor.fetchall()]
+
+        schema_sql = ''' '''
+        for table_name in tables:
+            cursor.execute(f"SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name = '{table_name}'")
+            columns = cursor.fetchall()
+
+            # Generate CREATE TABLE statement
+            schema_sql += f"\n\n-- Table: {table_name}\n"
+            schema_sql += f"CREATE TABLE {table_name} (\n"
+            schema_sql += ",\n".join([f"    {column[1]} {column[2]}" for column in columns])
+            schema_sql += "\n);\n"
+
+    except psycopg2.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        pass
+        cursor.close()
+        connection.close()
+
+    return schema_sql
+
+# Function to generate insert query for generated table.
+def generagte_insert_query(table_name, col_details, db_name, **new_db_config):
+
+    # Making connection
+    connection = psycopg2.connect(**new_db_config)
+    cursor = connection.cursor()
+
+    # print(col_details)
+
+    # print(table_name)
+    # print(col_details)
+    # print(db_name)
     # Extract foreign key details.
     foreign_key = finding_foreign_key(col_details)
-    print(foreign_key)
+    print(f'fk : {foreign_key}')
 
     # Split col_details by ","
     column_list =  col_details.split(",")
     column_list = [table_details for table_details in column_list if 'foreign' not in table_details.lower()]
-   
+    
+
     column_details_list = []
+    
     
     for column in column_list:
         s = column.split(":")
         column_details_list.append(s)
-    
-    
-    columns_info = [ ]
+    # print(column_details_list)
+
+
+    columns_info = []
     for col_info in column_details_list:
-
-        if (len(col_info) > 2) and (col_info[2].lower().strip() == 'primary key' or col_info[2].lower().strip() == 'unique' ):
-            columns_info.append([col_info[0].strip(),  col_info[1].strip(),  col_info[2].strip() ])
+        if (len(col_info) > 2) and (col_info[2].lower().strip() == 'primary key' or col_info[2].lower().strip() == 'unique'):
+            columns_info.append([col_info[0].strip(), col_info[1].strip(), col_info[2].strip()])
         else:
-            columns_info.append([col_info[0].strip()  , col_info[1].strip() ])
-    print(columns_info)
+            columns_info.append([col_info[0].strip(), col_info[1].strip()])
+    # print(col_info)
 
-    
-    # Generate fake data for each column and print as comma-separated values
+
+
     fake_data = []
-    for col_info in columns_info:                 # [['name', 'char(23)', 'primary key'], [' dob', 'date'], [' id', 'int'], [' city', 'varchar()']]
-        
-
+    for col_info in columns_info:
         if col_info[0].strip() in foreign_key[0]:
-            print('foreign key')
-
             index = foreign_key[0].index(col_info[0].strip())
-
-
             try:
-                connection = mysql.connector.connect(**db_config)
-                cursor = connection.cursor()
 
-
-
-                cursor.execute(f"USE {db_name}")
-                cursor.execute(f"select {foreign_key[2][index]} from {foreign_key[1][index]}")
+                cursor.execute(f"SELECT {foreign_key[2][index]} FROM {foreign_key[1][index]}")
                 all_fk_value = cursor.fetchall()
-                
-                all_data = [ data[0] for data in all_fk_value ]
-                # print(all_data)
-
+                # print(all_fk_value)
+                all_data = [data[0] for data in all_fk_value]
+                print(all_data)
                 fake_data.append(fake.random_element(elements=all_data))
-
-            except mysql.connector.Error as err:
-                print(err)
+            except psycopg2.Error as err:
+                # print(err)
                 pass
-
             finally:
                 cursor.close()
                 connection.close()
-        
-
-        elif (len(col_info) > 2) and (col_info[2].lower() == 'primary key' or col_info[2].lower() == 'unique' ):
-            
-            print("primary key")
-            
+        elif (len(col_info) > 2) and (col_info[2].lower() == 'primary key' or col_info[2].lower() == 'unique'):
             column_name = col_info[0]
             data_type = col_info[1]
-
             try:
                 # connection = mysql.connector.connect(**db_config)
                 # cursor = connection.cursor()
 
                 cursor.execute(f"USE {db_name}")
                 cursor.execute(f"select {column_name} from {table_name}")
+                cursor.execute(f"SELECT {column_name} FROM {table_name}")
+
                 result = cursor.fetchall()
-
-
-                # finding all values from table of primary key.
-                all_value = [ value[0] for value in result ]
+                all_value = [value[0] for value in result]
                 # print(all_value)
-
-
                 real_data = generate_fake_data(column_name, data_type)
+                # print("genrated data : ", real_data)
 
-                
-                while(True):
-                    if real_data not in all_value:
-                        fake_data.append(real_data)
-                        # print(real_data)
-                        break
-                    else:
-                        print('find duplicate: ', real_data)
-                        real_data = generate_fake_data(column_name, data_type)
+                # Check if the generated data already exists in the table
+                while real_data in all_value:
+                    # print('find duplicate: ', real_data)
+                    real_data = generate_fake_data(column_name, data_type)
 
-            except mysql.connector.Error as err:
-                print(err)
+                fake_data.append(real_data)
+
+                # print("fk data : ", fake_data)
+
+            except psycopg2.Error as err:
+                # print(err)
                 pass
-
             finally:
                 cursor.close()
                 connection.close()
 
         else:
-            print('normal')
             column_name = col_info[0]
             data_type = col_info[1]
             fake_data.append(generate_fake_data(column_name, data_type))
-    
+    print(fake_data)
 
-
-
-    # Print the generated fake data as comma-separated values
-    if len(fake_data)==1:
+    if len(fake_data) == 1:
         if type(fake_data[0]) == str:
-            insert_query = f"insert into {table_name} values ('{fake_data[0]}') ;"
-            print(insert_query)
-            return insert_query
+            insert_query = f"INSERT INTO {table_name} VALUES ('{fake_data[0]}');"
+            # print(insert_query)
         else:
-            insert_query = f"insert into {table_name} values ({fake_data[0]}) ;"
-            print(insert_query)
-            return insert_query
+            insert_query = f"INSERT INTO {table_name} VALUES ({fake_data[0]});"
+            # print(insert_query)
     else:
         fake_data = tuple(fake_data)
-        insert_query = f"insert into {table_name} values {fake_data} ;"
+        insert_query = f"INSERT INTO {table_name} VALUES {fake_data};"
         print(insert_query)
-        return insert_query
+        print()
+
+    # print(fake_data)
+    return insert_query

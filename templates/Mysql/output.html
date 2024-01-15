@@ -51,7 +51,7 @@
     <br><br><br><br>
 
     {% if total==num_tables %}
-        <form action="/download_schema/{{ db_name }}" method="post">
+        <form action="{{ url_for('mysql_db.download_schema', db_name = db_name) }}" method="post">
             <button type="submit">click here to download schema </button>
         </form>
     {% endif %} 

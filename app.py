@@ -13,6 +13,7 @@ app = Flask(__name__)
 
 app.register_blueprint(mongo_db)
 app.register_blueprint(mysql_db)
+app.register_blueprint(postgres_db)
 
 # Starting route for the project 
 @app.route('/' , methods = ['GET' , 'POST'])
@@ -31,6 +32,12 @@ def mysql_route() :
 def mongo_route() :
 
     return render_template('Mongo/index.html')
+
+# route for PostgreSQL database
+@app.route('/postgres/' )
+def postgres_route() :
+
+    return render_template('Postgres/index.html')
 
 
 if __name__ == '__main__':

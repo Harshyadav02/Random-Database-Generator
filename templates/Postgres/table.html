@@ -8,8 +8,8 @@
 </head>
 <body>
     <div class="container">
-
-        <form action="/submit_table_details/{{ db_name }}/{{ num_tables }}/" method="post">
+<!-- /submit_table_details/{{ db_name }}/{{ num_tables }}/ -->
+        <form action="{{ url_for('postgres_db.table_details', db_name=db_name, num_tables=num_tables) }}" method="post">
 
             <label for="dbName">Database Name:</label>
             <input type="text" id="dbName" name="dbName" value=" {{ db_name }}" disabled required>
@@ -20,10 +20,10 @@
 
                 <h2>Table {{ number }}</h2>
                 <label for="tableName">Table Name:</label>
-                <input type="text" id="tableName" name="tableName" placeholder="Enter Table Name" required>
+                <input type="text" id="tableName" name="tableName" placeholder="Enter Table Name Postgres" required>
 
                 <label for="columnDetails">Column Details:</label>
-                <input type="text" id="columnDetails" name="columnDetails" placeholder="columnName:datatype(size):primary key (or other):constraints          For Eg: student_id:int:primary key, student_name:varchar(20):not null, city:varchar(20):not null "  required>
+                <input type="text" id="columnDetails" name="columnDetails" placeholder="columnName:datatype(size):primary key (or other):constraints   Postgres       For Eg: student_id:int:primary key, student_name:varchar(20):not null, city:varchar(20):not null "  required>
 
                 <br><br>
             {% endfor %}

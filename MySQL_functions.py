@@ -1,7 +1,6 @@
 import psycopg2
 from faker import Faker
 import random
-from config import db_config
 
 # Initialize the Faker instance
 fake = Faker()
@@ -48,7 +47,6 @@ def generate_schema_sql(db_name, **new_db_config):
 
 # function to generate fake data for int datatype
 def int_fake_data(column_name):
-
     if ( 'phone_number' in column_name or 'contact' in column_name or 'telephone' in column_name ):
         return fake.random_number(9)
     
@@ -81,7 +79,6 @@ def varchar_char_fake_data(column_name, data_type):
             max_length = int(data_type.replace('char', '').strip('()'))
         except:
             max_length = 1
-
 
 
     if ('first_name' in column_name or 'f_name' in column_name):

@@ -6,6 +6,7 @@ from all_functions import create_table                      # def create_table(c
 from all_functions import generate_fake_data                # def generate_fake_data(column_name, data_type):
 from all_functions import generagte_insert_query            # def generate_schema_sql(db_name)
 from all_functions import generate_schema_sql
+from config import pdb_config
 
 # Initialize the Faker instance
 fake = Faker()
@@ -38,7 +39,7 @@ def table_details(db_name, num_tables):
 
     messages = []
 
-    connection = psycopg2.connect(**db_config)
+    connection = psycopg2.connect(**pdb_config)
     # Set autocommit mode to True
     connection.autocommit = True
     cursor = connection.cursor()

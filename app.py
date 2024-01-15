@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from faker import Faker
 from MongoDB_views import mongo_db
 from MySQL_views import mysql_db
-
+from Postgres_views import postgres_db
 
 # Initialize the Faker instance
 fake = Faker()

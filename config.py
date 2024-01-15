@@ -11,3 +11,12 @@ db_config = {
 
 #  MongoDb configuration 
 client = MongoClient("mongodb://127.0.0.1:27017")
+
+# Postgres configuration
+pdb_config = {
+    'host': 'localhost',
+    'user': 'postgres',
+    'password': 'root',
+    'dbname': 'postgres',
+    'port': 5432
+}

@@ -75,7 +75,7 @@ def table_details(db_name, num_tables):
                 num += 1
 
                 try:
-                    for entry in range(5):
+                    for entry in range(50):
                         insert_query = generagte_insert_query(table_name, column_details, db_name, **new_db_config)
                         cursor.execute(insert_query)
                         connection.commit()

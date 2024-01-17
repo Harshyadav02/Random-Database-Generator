@@ -54,11 +54,11 @@ def table_details(db_name, num_tables):
 
     # Defining new database configuration
     new_db_config = {
-        'host': 'localhost',
-        'user': 'postgres',
-        'password': 'root',
+        'host': pdb_config['host'],
+        'user': pdb_config['user'],
+        'password': pdb_config['password'],
         'dbname': db_name,
-        'port': 5432
+        'port': pdb_config['port']
     }
 
     # Reconnect to the newly created database
@@ -136,11 +136,11 @@ def download_schema(db_name):
 
     # Define your MySQL database configuration
     new_db_config = {
-        'host': 'localhost',
-        'user': 'postgres',
-        'password': 'root',
+        'host': pdb_config['host'],
+        'user': pdb_config['user'],
+        'password': pdb_config['password'],
         'dbname': db_name,
-        'port': 5432
+        'port': pdb_config['port']
     }
 
 

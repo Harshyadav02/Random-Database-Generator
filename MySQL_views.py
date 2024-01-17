@@ -41,10 +41,10 @@ def table_details(db_name, num_tables):
     connection.close()
     # Defining new database configuration
     new_db_config = {
-    'host': 'localhost',
-    'user': 'root',
+    'host': db_config['host'],
+    'user': db_config['user'],
     'database': db_name,
-    'password': 'root'
+    'password': db_config['password']
     }
 
     connection = mysql.connector.connect(**new_db_config)
@@ -106,10 +106,10 @@ def table_details(db_name, num_tables):
 def download_schema(db_name):
     # Defining new database configuration
     new_db_config = {
-        'host': 'localhost',
-        'user': 'root',
+        'host': db_config['host'],
+        'user': db_config['user'],
         'database': db_name,
-        'password': 'root'
+        'password': db_config['password']
     }
 
     if request.method == 'POST':

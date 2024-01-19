@@ -94,6 +94,9 @@ footer {
   height: 100%;
   width: 100%;
 }
+#foot{
+  color: black;
+}
 @media screen and (max-width: 768px) {
 .database-option {
   width: 100%; /* Make the items full width on screens smaller than 768px */

@@ -57,7 +57,7 @@ def table_details(mongo_database, number_of_collections):
             messages.append(f"Collection {collection_list[coll]} Created Successfully") 
 
             # N number of time document  will be inserted to collection
-            for time in range(5):
+            for time in range(50):
                 
                 # dictionary to store data for each collection
                 collection_data = {}

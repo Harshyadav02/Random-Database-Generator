@@ -3,6 +3,7 @@ from faker import Faker                         # class for fake data
 from config import client                       # instance of MongoClient class to use mongodb
 import random                                   # to genrate random number 
 import json
+import ranjg
 # making Faker class instance 
 fake = Faker()
 
@@ -37,7 +38,7 @@ def int_fake_data(key, json_data):
         return json_data
     
     elif ('age' in key):
-        json_data[key]  = random_int
+        json_data[key]  = fake.random_int(2)
         return json_data
     
     else:
@@ -142,13 +143,25 @@ def string_fake_data(key, json_data):
 def array_fake_data(key,json_data) :
     
     json_data[key] = fake.pylist(nb_elements=10, variable_nb_elements=True, value_types=['str' , int,float,bool])
-    return json_data
+    return json_data 
         
     
 # function to genrate fake data form object datatype
 def object_fake_data(key , json_data) :
-
-    json_data[key] = fake.pydict(nb_elements=10, variable_nb_elements=True, value_types=['str' , int,float,bool])
+    keys_list = [fake.word() for _ in range(50)]
+    value_dict = [fake.word()  for _ in range(50)] +[random.randint(1,100)  for _ in range(50)] + [fake.pybool()  for _ in range(50)] + [fake.pyobject()  for _ in range(50)] + [fake.pystr()  for _ in range(50)]  
+    data_list  = {}
+    for i in range(random.randint(1,10)) :
+   
+        random_key = random.choice(keys_list)
+        value = random.choice(value_dict)
+        data_list[random_key] =  value
+        
+            
+        
+    fake_key = fake.pydict(nb_elements=10, variable_nb_elements=True, value_types=['str' , int,float,bool ])
+    fake_key[fake.word()] = data_list
+    json_data[key] = fake_key 
     return json_data
 
 # function to generate fake data for decimal data type

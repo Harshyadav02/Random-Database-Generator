@@ -3,7 +3,7 @@ from faker import Faker                         # class for fake data
 from config import client                       # instance of MongoClient class to use mongodb
 import random                                   # to genrate random number 
 import json
-import ranjg
+
 # making Faker class instance 
 fake = Faker()
 

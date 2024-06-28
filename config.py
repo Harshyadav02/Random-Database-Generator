@@ -4,8 +4,8 @@ from pymongo import MongoClient                 # class to intract to mongodb
 #  Mysql configuration
 db_config = {
     'host': 'localhost',
-    'user': 'root',
-    'password': 'root'
+    'user': '<username',
+    'password': '<password>'
 }
 
 

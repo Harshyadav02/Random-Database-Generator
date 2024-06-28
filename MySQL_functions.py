@@ -279,7 +279,7 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
 
     # Extract foreign key details.
     foreign_key = finding_foreign_key(col_details)
-    print(foreign_key)
+   
 
     # Split col_details by ","
     column_list =  col_details.split(",")
@@ -299,7 +299,7 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
             columns_info.append([col_info[0].strip(),  col_info[1].strip(),  col_info[2].strip() ])
         else:
             columns_info.append([col_info[0].strip()  , col_info[1].strip() ])
-    print(columns_info)
+   
 
     
     # Generate fake data for each column and print as comma-separated values
@@ -308,7 +308,7 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
         
 
         if col_info[0].strip() in foreign_key[0]:
-            print('foreign key')
+            
 
             index = foreign_key[0].index(col_info[0].strip())
 
@@ -324,12 +324,12 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
                 all_fk_value = cursor.fetchall()
                 
                 all_data = [ data[0] for data in all_fk_value ]
-                # print(all_data)
+               
 
                 fake_data.append(fake.random_element(elements=all_data))
 
             except mysql.connector.Error as err:
-                print(err)
+                
                 pass
 
             finally:
@@ -339,7 +339,7 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
 
         elif (len(col_info) > 2) and (col_info[2].lower() == 'primary key' or col_info[2].lower() == 'unique' ):
             
-            print("primary key")
+            
             
             column_name = col_info[0]
             data_type = col_info[1]
@@ -355,7 +355,7 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
 
                 # finding all values from table of primary key.
                 all_value = [ value[0] for value in result ]
-                # print(all_value)
+                
 
 
                 real_data = generate_fake_data(column_name, data_type)
@@ -364,14 +364,14 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
                 while(True):
                     if real_data not in all_value:
                         fake_data.append(real_data)
-                        # print(real_data)
+                        
                         break
                     else:
-                        print('find duplicate: ', real_data)
+                        
                         real_data = generate_fake_data(column_name, data_type)
 
             except mysql.connector.Error as err:
-                print(err)
+                
                 pass
 
             finally:
@@ -379,24 +379,24 @@ def generagte_insert_query(table_name, col_details,db_name, **new_db_config):
                 connection.close()
 
         else:
-            print('normal')
+            
             column_name = col_info[0]
             data_type = col_info[1]
             fake_data.append(generate_fake_data(column_name, data_type))
     
     
-    # Print the generated fake data as comma-separated values
+    # print the generated fake data as comma-separated values
     if len(fake_data)==1:
         if type(fake_data[0]) == str:
             insert_query = f"insert into {table_name} values ('{fake_data[0]}') ;"
-            print(insert_query)
+            
             return insert_query
         else:
             insert_query = f"insert into {table_name} values ({fake_data[0]}) ;"
-            print(insert_query)
+            
             return insert_query
     else:
         fake_data = tuple(fake_data)
         insert_query = f"insert into {table_name} values {fake_data} ;"
-        print(insert_query)
+        
         return insert_query
